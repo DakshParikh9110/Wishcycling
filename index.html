@@ -97,8 +97,7 @@
       transition:border-color .2s;
     }
     select:focus{border-color:var(--accent);}
-    .state-result{opacity:0;transform:translateY(12px) scale(0.98);transition:opacity .4s,transform .4s;pointer-events:none;}
-    .state-result.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+    .state-result{opacity:1;transform:none;pointer-events:auto;}
     .state-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px;}
     .state-card{
       background:var(--bg);border-radius:12px;padding:18px;
@@ -389,7 +388,6 @@ Object.keys(stateNames).sort((a,b)=>stateNames[a].localeCompare(stateNames[b])).
 function showState(){
   const code=sel.value;
   const result=document.getElementById('stateResult');
-  if(!code){result.classList.remove('show');return;}
   const d=stateData[code]||{rank:25,tier:'mid',deposit:false,verdict:'Data for this state reflects national mid-tier averages.'};
   const tierLabel={top:'Top tier',mid:'Mid tier',low:'Lower tier'};
   const tierClass={top:'tier-top',mid:'tier-mid',low:'tier-low'};
