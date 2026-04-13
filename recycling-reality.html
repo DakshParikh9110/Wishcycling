@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Recycling Reality — What Actually Happens to What You Throw Away</title>
+  <meta name="description" content="Only 21% of recyclable material in the US is actually captured for recycling. Here is the data — and a calculator to check your own habits."/>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --bg:#f7f2ea;
+      --bg2:#ede5d8;
+      --card:#faf6ee;
+      --card2:#f0e8d8;
+      --border:#e0d4c0;
+      --shadow:#d4c8b0;
+      --shadow2:#ccc0a8;
+      --text:#1a1a18;
+      --text2:#5a5a50;
+      --text3:#8a8a78;
+      --text4:#9a9a88;
+      --accent:#c8620a;
+      --accent2:#f0e8d8;
+      --red:#dc3545;
+      --green:#28a745;
+      --amber:#856404;
+    }
+
+    html{font-size:16px;}
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:#e8e0d0;
+      min-height:100vh;
+      padding:2rem 1rem;
+    }
+
+    .page{
+      max-width:960px;
+      margin:0 auto;
+      background:linear-gradient(145deg,var(--bg) 0%,var(--bg2) 100%);
+      border-radius:24px;
+      padding:3rem 3rem 5rem;
+      box-shadow:0 12px 48px rgba(0,0,0,0.14),0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    /* HEADER */
+    .dash-header{border-bottom:1px solid var(--border);padding-bottom:24px;margin-bottom:3rem;}
+    .dash-eyebrow{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 12px;}
+    .dash-title{font-family:'Fraunces',serif;font-size:32px;font-weight:700;color:var(--text);margin:0 0 12px;line-height:1.2;}
+    .dash-sub{font-size:14px;color:var(--text2);margin:0 0 14px;line-height:1.8;max-width:640px;}
+    .dash-date{font-size:11px;color:var(--text4);}
+
+    /* SECTION HEADERS */
+    .sec-header{margin-bottom:18px;padding-bottom:14px;border-bottom:2.5px solid var(--accent);}
+    .sec-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--text);margin:0;line-height:1.2;}
+    .sec-desc{font-size:13px;color:var(--text2);margin:0 0 1.5rem;line-height:1.8;max-width:680px;}
+    .sec-note{font-size:12px;color:#7a7a68;background:var(--card2);border-radius:8px;padding:11px 16px;margin-bottom:1.5rem;border-left:3px solid #c8a060;line-height:1.7;}
+    .divider{border:none;border-top:1px solid var(--border);margin:3.5rem 0;}
+    .hint{font-size:11px;color:var(--text4);margin:0 0 1.25rem;font-style:italic;}
+
+    /* KPI GRID */
+    .kpi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:2.5rem;}
+    .kpi{
+      background:linear-gradient(145deg,var(--card),var(--card2));
+      border-radius:16px;padding:24px;
+      border:1px solid var(--border);
+      box-shadow:0 4px 0 var(--shadow),0 6px 20px rgba(0,0,0,0.09);
+      opacity:0;transform:translateY(18px);
+      transition:opacity .5s,transform .5s,box-shadow .2s,translate .2s;
+    }
+    .kpi.visible{opacity:1;transform:translateY(0);}
+    .kpi:hover{box-shadow:0 8px 0 var(--shadow),0 14px 28px rgba(0,0,0,0.11);translate:0 -4px;}
+    .kpi-acc{width:28px;height:4px;border-radius:2px;margin-bottom:14px;}
+    .kpi-lbl{font-size:11px;color:var(--text3);margin:0 0 8px;line-height:1.5;font-weight:600;letter-spacing:.02em;}
+    .kpi-num{font-family:'Fraunces',serif;font-size:34px;font-weight:700;margin:0 0 8px;line-height:1;}
+    .kpi-sub{font-size:11px;color:var(--text4);margin:0;line-height:1.55;}
+
+    /* STATE TOOL */
+    .state-tool{
+      background:linear-gradient(145deg,var(--card),var(--card2));
+      border-radius:18px;padding:28px;
+      border:1px solid var(--border);
+      box-shadow:0 4px 0 var(--shadow),0 8px 24px rgba(0,0,0,0.1);
+      margin-bottom:2rem;
+    }
+    .state-select-row{display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
+    .state-select-row label{font-size:13px;color:var(--text2);font-weight:700;}
+    select{
+      font-family:'DM Sans',sans-serif;
+      font-size:14px;padding:11px 18px;border-radius:10px;
+      border:2px solid var(--border);background:var(--bg);color:var(--text);
+      cursor:pointer;outline:none;min-width:220px;
+      box-shadow:inset 0 2px 4px rgba(0,0,0,0.07),0 2px 0 var(--shadow);
+      transition:border-color .2s;
+    }
+    select:focus{border-color:var(--accent);}
+    .state-result{opacity:0;transform:translateY(12px) scale(0.98);transition:opacity .4s,transform .4s;pointer-events:none;}
+    .state-result.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+    .state-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px;}
+    .state-card{
+      background:var(--bg);border-radius:12px;padding:18px;
+      border:1px solid var(--border);
+      box-shadow:0 3px 0 var(--shadow2),0 4px 12px rgba(0,0,0,0.07);
+      transition:box-shadow .2s,translate .2s;
+    }
+    .state-card:hover{box-shadow:0 6px 0 var(--shadow2),0 8px 18px rgba(0,0,0,0.1);translate:0 -2px;}
+    .sc-label{font-size:10px;font-weight:700;color:var(--text4);letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px;}
+    .sc-val{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--text);margin:0 0 4px;line-height:1.1;}
+    .sc-sub{font-size:11px;color:var(--text3);margin:0;line-height:1.4;}
+    .state-verdict{
+      background:#fff8ee;border-radius:12px;padding:18px 22px;
+      border-left:5px solid var(--accent);
+      box-shadow:0 3px 0 var(--shadow),0 4px 16px rgba(0,0,0,0.07);
+    }
+    .sv-label{font-size:10px;font-weight:700;color:var(--text4);letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px;}
+    .sv-text{font-size:13px;color:#3a3a30;margin:0;line-height:1.85;}
+    .tier-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;box-shadow:0 2px 4px rgba(0,0,0,0.1);}
+    .tier-top{background:#d4edda;color:#155724;}
+    .tier-mid{background:#fff3cd;color:#856404;}
+    .tier-low{background:#f8d7da;color:#721c24;}
+
+    /* MATERIAL BARS */
+    .mat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:2rem;}
+    .mat-card{
+      background:linear-gradient(145deg,var(--card),var(--card2));
+      border-radius:14px;padding:20px 22px;
+      border:1px solid var(--border);
+      box-shadow:0 4px 0 var(--shadow),0 6px 16px rgba(0,0,0,0.08);
+      transition:box-shadow .2s,translate .2s;
+    }
+    .mat-card:hover{box-shadow:0 7px 0 var(--shadow),0 10px 22px rgba(0,0,0,0.1);translate:0 -3px;}
+    .mat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
+    .mat-name{font-size:13px;font-weight:700;color:var(--text);}
+    .mat-rate{font-family:'Fraunces',serif;font-size:18px;font-weight:700;}
+    .mat-track{height:10px;background:#e0d8c8;border-radius:5px;box-shadow:inset 0 2px 4px rgba(0,0,0,0.12);overflow:hidden;margin-bottom:9px;}
+    .mat-fill{height:100%;border-radius:5px;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1);box-shadow:0 1px 3px rgba(0,0,0,0.18);}
+    .mat-sub{font-size:11px;color:var(--text3);line-height:1.55;}
+
+    /* CALCULATOR */
+    .calc-wrap{
+      background:linear-gradient(145deg,var(--card),var(--card2));
+      border-radius:18px;padding:28px;
+      border:1px solid var(--border);
+      box-shadow:0 4px 0 var(--shadow),0 8px 24px rgba(0,0,0,0.1);
+      margin-bottom:2rem;
+    }
+    .items-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:24px;}
+    .item-btn{
+      background:linear-gradient(145deg,#fdf9f3,var(--bg2));
+      border:2px solid var(--border);
+      border-radius:16px;padding:18px 10px 14px;
+      cursor:pointer;text-align:center;
+      box-shadow:0 4px 0 var(--shadow2),0 6px 12px rgba(0,0,0,0.08);
+      transition:box-shadow .15s,translate .15s,border-color .15s,background .15s;
+      display:flex;flex-direction:column;align-items:center;gap:8px;
+      user-select:none;position:relative;
+    }
+    .item-btn:hover{box-shadow:0 7px 0 var(--shadow2),0 10px 20px rgba(0,0,0,0.12);translate:0 -3px;border-color:#c8a070;}
+    .item-btn:active{box-shadow:0 1px 0 var(--shadow2);translate:0 3px;}
+    .item-btn.selected{background:linear-gradient(145deg,#f0e8da,#e4d8c4);border-color:#8a7a60;box-shadow:0 4px 0 #7a6a50,0 6px 14px rgba(0,0,0,0.12);translate:0 -1px;}
+    .item-btn.reveal-right{background:linear-gradient(145deg,#d8f0de,#c4e8cc);border-color:var(--green);box-shadow:0 4px 0 #1a7a30,0 6px 14px rgba(40,167,69,0.2);}
+    .item-btn.reveal-wrong{background:linear-gradient(145deg,#f8dada,#f0c0c0);border-color:var(--red);box-shadow:0 4px 0 #a02030,0 6px 14px rgba(220,53,69,0.2);}
+    .item-icon-wrap{
+      width:52px;height:52px;border-radius:13px;
+      display:flex;align-items:center;justify-content:center;
+      background:#e8dcc8;transition:background .15s;
+    }
+    .item-btn.selected .item-icon-wrap{background:#d8ccb8;}
+    .item-btn.reveal-right .item-icon-wrap{background:#a8ddb8;}
+    .item-btn.reveal-wrong .item-icon-wrap{background:#f0a8a8;}
+    .item-icon-wrap i{font-size:28px;color:#3a3020;transition:color .15s;}
+    .item-icon-wrap svg{transition:color .15s;}
+    .item-btn.reveal-right .item-icon-wrap i,
+    .item-btn.reveal-right .item-icon-wrap svg{color:#155724;stroke:#155724;}
+    .item-btn.reveal-wrong .item-icon-wrap i,
+    .item-btn.reveal-wrong .item-icon-wrap svg{color:#721c24;stroke:#721c24;}
+    .item-name{font-size:10px;font-weight:700;color:#4a4038;line-height:1.3;text-align:center;}
+    .item-btn.reveal-right .item-name{color:#155724;}
+    .item-btn.reveal-wrong .item-name{color:#721c24;}
+    .item-tick{
+      position:absolute;top:7px;right:7px;
+      width:18px;height:18px;border-radius:50%;
+      background:#8a7a60;color:white;
+      display:none;align-items:center;justify-content:center;
+      font-size:10px;font-weight:700;
+      box-shadow:0 2px 4px rgba(0,0,0,0.2);
+    }
+    .item-btn.selected .item-tick{display:flex;}
+    .item-btn.reveal-right .item-tick{display:flex;background:var(--green);}
+    .item-btn.reveal-wrong .item-tick{display:flex;background:var(--red);}
+
+    .calc-actions{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+    .calc-btn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;padding:12px 28px;border-radius:10px;border:none;cursor:pointer;transition:all .15s;letter-spacing:.02em;}
+    .calc-primary{background:var(--text);color:var(--bg);box-shadow:0 4px 0 #000,0 6px 12px rgba(0,0,0,0.2);}
+    .calc-primary:hover{box-shadow:0 6px 0 #000,0 8px 16px rgba(0,0,0,0.25);translate:0 -2px;}
+    .calc-primary:active{box-shadow:0 1px 0 #000;translate:0 3px;}
+    .calc-secondary{background:var(--bg);color:var(--text2);border:2px solid var(--border);box-shadow:0 3px 0 var(--shadow2),0 4px 8px rgba(0,0,0,0.07);}
+    .calc-secondary:hover{box-shadow:0 5px 0 var(--shadow2),0 6px 12px rgba(0,0,0,0.1);translate:0 -2px;}
+    .calc-secondary:active{box-shadow:0 1px 0 var(--shadow2);translate:0 2px;}
+
+    .result-wrap{display:none;}
+    .result-wrap.show{display:block;animation:slideUp .4s cubic-bezier(.4,0,.2,1);}
+    @keyframes slideUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    .result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:20px;}
+    .result-card{border-radius:14px;padding:20px;box-shadow:0 4px 0 rgba(0,0,0,0.12),0 6px 16px rgba(0,0,0,0.08);transition:box-shadow .2s,translate .2s;}
+    .result-card:hover{box-shadow:0 7px 0 rgba(0,0,0,0.15),0 10px 20px rgba(0,0,0,0.1);translate:0 -3px;}
+    .rc-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px;}
+    .rc-val{font-family:'Fraunces',serif;font-size:30px;font-weight:700;margin:0 0 5px;line-height:1.1;}
+    .rc-sub{font-size:11px;margin:0;line-height:1.5;}
+    .items-review{margin-top:20px;}
+    .review-title{font-size:14px;font-weight:700;color:var(--text);margin:0 0 12px;}
+    .review-list{display:flex;flex-direction:column;gap:8px;}
+    .review-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:10px;font-size:12px;line-height:1.6;box-shadow:0 2px 0 rgba(0,0,0,0.07),0 3px 8px rgba(0,0,0,0.05);}
+    .ri-good{background:linear-gradient(135deg,#d4edda,#c4e0cc);color:#155724;}
+    .ri-bad{background:linear-gradient(135deg,#f8d7da,#f0c0c4);color:#721c24;}
+    .ri-icon{font-size:15px;flex-shrink:0;margin-top:2px;font-weight:700;}
+    .ri-text strong{font-weight:700;display:block;margin-bottom:3px;font-size:13px;}
+
+    /* INSIGHT */
+    .insight{
+      border-left:5px solid var(--accent);
+      padding:22px 26px;margin-top:1.5rem;
+      background:linear-gradient(135deg,#fff8ee,#fdf0dc);
+      border-radius:0 16px 16px 0;
+      box-shadow:0 4px 0 var(--shadow),0 6px 20px rgba(0,0,0,0.08);
+    }
+    .insight-label{font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin:0 0 10px;}
+    .insight p{font-size:13px;color:#4a4a38;margin:0;line-height:1.95;}
+    .insight strong{color:var(--text);font-weight:700;}
+
+    /* FOOTNOTES */
+    .fn{font-size:10px;color:#b0a898;margin-top:3rem;border-top:1px solid var(--border);padding-top:14px;line-height:2;}
+
+    @media(max-width:640px){
+      .page{padding:1.5rem 1.25rem 3rem;}
+      .kpi-grid{grid-template-columns:1fr 1fr;}
+      .mat-grid{grid-template-columns:1fr;}
+      .items-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+      .state-cards{grid-template-columns:1fr 1fr;}
+      .result-grid{grid-template-columns:1fr;}
+      .dash-title{font-size:24px;}
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="dash-header">
+    <p class="dash-eyebrow">The recycling reality</p>
+    <h1 class="dash-title">What actually happens to what you throw away</h1>
+    <p class="dash-sub">Only 21% of recyclable material in the US is actually captured for recycling. Not because the system is broken. Because most of us are using it wrong. Here is the data — and a calculator to check your own habits.</p>
+    <p class="dash-date">Dashboard by Daksh · April 2026</p>
+  </div>
+
+  <div class="sec-header"><h2 class="sec-title">The system level</h2></div>
+  <p class="sec-desc">Before individual habits — here is what the national data shows.</p>
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi" style="transition-delay:0s"><div class="kpi-acc" style="background:#c8620a;"></div><p class="kpi-lbl">Recyclable material actually captured</p><p class="kpi-num" data-target="21" data-suffix="%" style="color:#c8620a;">--%</p><p class="kpi-sub">Of all recyclable material Americans generate, only 21% is collected for recycling. Source: Recycling Partnership, 2024.</p></div>
+    <div class="kpi" style="transition-delay:.1s"><div class="kpi-acc" style="background:#c8620a;"></div><p class="kpi-lbl">Recyclables lost at household level</p><p class="kpi-num" data-target="76" data-suffix="%" style="color:#c8620a;">--%</p><p class="kpi-sub">Of all recyclables lost in the system, 76% are lost before they reach a facility. Source: Recycling Partnership, 2024.</p></div>
+    <div class="kpi" style="transition-delay:.2s"><div class="kpi-acc" style="background:#dc3545;"></div><p class="kpi-lbl">US plastic recycling rate</p><p class="kpi-num" data-target="5" data-suffix="%" style="color:#dc3545;">--%</p><p class="kpi-sub">Lowest of any developed nation. Down from 8.7% in 2018 when China still accepted US plastic exports. Source: Greenpeace, 2022.</p></div>
+    <div class="kpi" style="transition-delay:.3s"><div class="kpi-acc" style="background:#c8620a;"></div><p class="kpi-lbl">Recyclable material lost to landfill annually</p><p class="kpi-num" data-prefix="$" data-target="6.5" data-suffix="B" data-decimal="true" style="color:#c8620a;">--</p><p class="kpi-sub">$6.5 billion worth of recyclable material ends up in US landfills every year. Source: Ball / Eunomia, 2023.</p></div>
+    <div class="kpi" style="transition-delay:.4s"><div class="kpi-acc" style="background:#1a1a18;"></div><p class="kpi-lbl">Average recycling collection cost per ton</p><p class="kpi-num" data-prefix="$" data-target="275" data-suffix="" style="color:#1a1a18;">--</p><p class="kpi-sub">Average cost to collect one ton of recyclables in the US, 2022-2023. Source: National Academies of Sciences, 2025.</p></div>
+    <div class="kpi" style="transition-delay:.5s"><div class="kpi-acc" style="background:#1a1a18;"></div><p class="kpi-lbl">Investment needed to modernise US recycling</p><p class="kpi-num" data-prefix="$" data-target="40" data-suffix="B" style="color:#1a1a18;">--</p><p class="kpi-sub">EPA estimates $36.5–43.4B needed to bring US recycling to a 50% rate. Source: EPA, 2024.</p></div>
+  </div>
+
+  <hr class="divider"/>
+
+  <div class="sec-header"><h2 class="sec-title">Your state</h2></div>
+  <p class="sec-desc">Recycling performance varies dramatically across the US. States with deposit return schemes — where you pay a small deposit on bottles and get it back when you return them — consistently outperform those without.</p>
+  <div class="state-tool">
+    <div class="state-select-row">
+      <label for="stateSelect">Select your state</label>
+      <select id="stateSelect" onchange="showState()"><option value="">-- Choose a state --</option></select>
+    </div>
+    <div class="state-result" id="stateResult">
+      <div class="state-cards">
+        <div class="state-card"><p class="sc-label">National ranking</p><p class="sc-val" id="stRank">--</p><p class="sc-sub">of 50 states · Ball/Eunomia 2023</p></div>
+        <div class="state-card"><p class="sc-label">Performance tier</p><p class="sc-val" id="stTier" style="font-size:15px;margin-top:4px;">--</p><p class="sc-sub" id="stTierSub">--</p></div>
+        <div class="state-card"><p class="sc-label">Deposit return scheme</p><p class="sc-val" id="stDeposit">--</p><p class="sc-sub" id="stDepositSub">--</p></div>
+      </div>
+      <div class="state-verdict"><p class="sv-label">State snapshot</p><p class="sv-text" id="stVerdict">--</p></div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <div class="sec-header"><h2 class="sec-title">Recycling rates by material</h2></div>
+  <p class="sec-desc">Not all materials are equal. Some are highly valuable and almost always recovered. Others have virtually no viable recycling infrastructure.</p>
+  <p class="sec-note">How to read these figures: each percentage shows the share of that material generated in the US that is successfully recycled into new material — not simply what is collected at the kerb, but what actually completes the recycling process and re-enters the supply chain.</p>
+  <div class="mat-grid" id="matGrid"></div>
+
+  <hr class="divider"/>
+
+  <div class="sec-header"><h2 class="sec-title">The wishcycling calculator</h2></div>
+  <p class="sec-desc">Wishcycling is putting something in the recycling bin hoping it gets recycled — even when it cannot be. Select every item you typically put in your recycling bin, then hit calculate to see how your habits stack up.</p>
+  <p class="hint">Select your items first — colours only reveal after you calculate</p>
+  <div class="calc-wrap">
+    <div class="items-grid" id="itemsGrid"></div>
+    <div class="calc-actions">
+      <button class="calc-btn calc-primary" onclick="calculate()">Calculate my impact</button>
+      <button class="calc-btn calc-secondary" onclick="resetCalc()">Reset</button>
+    </div>
+    <div class="result-wrap" id="resultWrap">
+      <div class="result-grid">
+        <div class="result-card" style="background:linear-gradient(135deg,#fff3cd,#ffe8a0);border:1.5px solid #f0d070;"><p class="rc-label" style="color:#856404;">Your wishcycling score</p><p class="rc-val" style="color:#c8820a;" id="scoreVal">--</p><p class="rc-sub" style="color:#856404;" id="scoreSub">--</p></div>
+        <div class="result-card" style="background:linear-gradient(135deg,#f8d7da,#f0b0b8);border:1.5px solid #e09098;"><p class="rc-label" style="color:#721c24;">Items that contaminate</p><p class="rc-val" style="color:#dc3545;" id="wrongCount">--</p><p class="rc-sub" style="color:#721c24;" id="wrongSub">--</p></div>
+        <div class="result-card" style="background:linear-gradient(135deg,#f0e8d8,#e8dcc8);border:1.5px solid #d8cdb8;"><p class="rc-label" style="color:#6a6a58;">Estimated annual cost to your city</p><p class="rc-val" style="color:#1a1a18;" id="costVal">--</p><p class="rc-sub" style="color:#7a7a68;">If every household in a city of 500,000 shared your habits</p></div>
+        <div class="result-card" style="background:linear-gradient(135deg,#d4edda,#b8ddc4);border:1.5px solid #98c8a8;"><p class="rc-label" style="color:#155724;">Items you got right</p><p class="rc-val" style="color:#28a745;" id="rightCount">--</p><p class="rc-sub" style="color:#155724;" id="rightSub">--</p></div>
+      </div>
+      <div class="items-review"><p class="review-title">Item by item breakdown</p><div class="review-list" id="reviewList"></div></div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <p class="insight-label">Observer's conclusion</p>
+    <p>The recycling system in the US is not failing because of a lack of infrastructure alone. It is failing at the point of disposal — the moment each person decides what goes in which bin. <strong>$6.5 billion worth of recyclable material is lost to landfill every year.</strong> The majority of that loss happens at the household level, before a single truck is dispatched. Better sorting at the point of disposal is the highest leverage intervention available. The data is clear on that. What happens next depends on whether awareness translates into habit change.</p>
+  </div>
+
+  <p class="fn">Sources: Recycling Partnership, State of Recycling Report (2024) · Ball Corporation / Eunomia, 50 States of Recycling (2023) · National Academies of Sciences, Municipal Solid Waste Recycling in the United States (2025) · EPA, Financial Assessment of US Recycling System Infrastructure (2024) · Greenpeace USA (2022) · American Forest and Paper Association (2024) · Communications Earth and Environment (2025)<br>State rankings reflect relative performance tiers from Ball/Eunomia 2023. Material recycling rates from AF&PA, EPA and industry sources. Dashboard by Daksh · April 2026 · Powered by Claude</p>
+
+</div>
+
+<script>
+// ── STATE DATA ──────────────────────────────────────────────────────────────
+const stateData={
+  AK:{rank:50,tier:'low',deposit:false,verdict:'Alaska faces unique recycling challenges due to its remote geography. No deposit scheme. Shipping recyclables to processing facilities is expensive and many communities have limited access.'},
+  AL:{rank:42,tier:'low',deposit:false,verdict:'Alabama is among the lower-performing states on recycling. No deposit scheme and limited mandatory recycling legislation. Infrastructure gaps are significant outside major urban areas.'},
+  AR:{rank:46,tier:'low',deposit:false,verdict:'Arkansas is among the lower-performing states. No deposit scheme and limited recycling mandates. Infrastructure investment has been minimal and participation rates are low.'},
+  AZ:{rank:36,tier:'low',deposit:false,verdict:'Arizona performs in the lower tier. No deposit scheme. Phoenix has invested in MRF infrastructure but statewide capture rates remain low.'},
+  CA:{rank:9,tier:'top',deposit:true,verdict:'California\'s CalRecycle program and deposit scheme make it a top performer at scale. Its sheer size means it processes more recyclable material than any other state.'},
+  CO:{rank:16,tier:'mid',deposit:false,verdict:'Colorado has been expanding recycling access but infrastructure gaps remain. No deposit scheme. Denver and Boulder have strong programs but rural areas lag significantly behind.'},
+  CT:{rank:5,tier:'top',deposit:true,verdict:'Connecticut\'s deposit scheme and strong municipal programs place it firmly in the top tier with one of the higher capture rates for paper and metal in the Northeast.'},
+  DE:{rank:31,tier:'mid',deposit:false,verdict:'Delaware sits in the mid tier. No deposit scheme. Its small size and proximity to Philadelphia\'s recycling infrastructure helps but statewide capture rates are average.'},
+  FL:{rank:33,tier:'low',deposit:false,verdict:'Florida performs below the national average. No deposit scheme. High tourism and transient population creates recycling education challenges. Contamination rates are a persistent documented problem.'},
+  GA:{rank:32,tier:'low',deposit:false,verdict:'Georgia performs below the national average. No deposit scheme and significant infrastructure gaps outside the Atlanta metro area. Contamination rates in single-stream programs are above average.'},
+  HI:{rank:12,tier:'top',deposit:true,verdict:'Hawaii has a deposit return scheme and performs above average. Island logistics add cost and complexity but the deposit scheme drives strong container capture rates.'},
+  IA:{rank:8,tier:'top',deposit:true,verdict:'Iowa\'s deposit scheme drives above-average capture rates for beverage containers. One of the top-performing Midwestern states despite lower population density.'},
+  ID:{rank:25,tier:'mid',deposit:false,verdict:'Idaho performs in the mid tier. No deposit scheme. Boise has invested in recycling access but rural areas have limited infrastructure.'},
+  IL:{rank:20,tier:'mid',deposit:false,verdict:'Illinois performs in the mid tier nationally. Chicago has a mixed recycling record — participation rates are lower than comparable cities. No statewide deposit scheme.'},
+  IN:{rank:30,tier:'mid',deposit:false,verdict:'Indiana sits in the mid tier. No deposit scheme. Indianapolis has a solid municipal program but statewide performance is average.'},
+  KS:{rank:28,tier:'mid',deposit:false,verdict:'Kansas sits in the mid tier. No deposit scheme. Wichita and Kansas City have municipal programs but statewide capture rates are average.'},
+  KY:{rank:40,tier:'low',deposit:false,verdict:'Kentucky performs below the national average. No deposit scheme. Recycling access is uneven — stronger in Lexington and Louisville, limited in rural eastern Kentucky.'},
+  LA:{rank:44,tier:'low',deposit:false,verdict:'Louisiana is among the lower-performing states. No deposit scheme. New Orleans has some municipal recycling but statewide infrastructure is limited.'},
+  MA:{rank:7,tier:'top',deposit:true,verdict:'Massachusetts performs well above the national average. Its deposit scheme and strong municipal programs make it one of the better-performing large states.'},
+  MD:{rank:19,tier:'mid',deposit:false,verdict:'Maryland performs in the mid tier. Strong environmental legislation and good MRF access in the Baltimore-Washington corridor but statewide capture rates lag outside major metros.'},
+  ME:{rank:1,tier:'top',deposit:true,verdict:'Maine consistently ranks as the top-performing recycling state in the US. Its deposit return scheme — one of the oldest in the country — drives some of the highest capture rates for bottles and cans nationally.'},
+  MI:{rank:2,tier:'top',deposit:true,verdict:'Michigan has the highest bottle deposit in the US at 10 cents per container, driving an 89%+ return rate for covered beverages — the highest in the nation.'},
+  MN:{rank:13,tier:'mid',deposit:false,verdict:'Minnesota performs in the mid tier without a statewide deposit scheme. Minneapolis-St. Paul has strong programs but rural capture rates drag down the state average.'},
+  MO:{rank:29,tier:'mid',deposit:false,verdict:'Missouri sits in the mid tier. No deposit scheme. St. Louis and Kansas City have invested in recycling infrastructure but rural performance is weaker.'},
+  MS:{rank:45,tier:'low',deposit:false,verdict:'Mississippi is among the lowest-performing states nationally. No deposit scheme. Limited recycling infrastructure and low participation rates. A significant share of recyclable material goes directly to landfill.'},
+  MT:{rank:24,tier:'mid',deposit:false,verdict:'Montana performs in the mid tier. No deposit scheme. Low population density makes recycling economics challenging but the state has made reasonable investments.'},
+  NC:{rank:23,tier:'mid',deposit:false,verdict:'North Carolina sits in the mid tier. Mandatory recycling legislation for certain materials but no deposit scheme. UNC research tracks average collection costs at approximately $275 per ton.'},
+  ND:{rank:41,tier:'low',deposit:false,verdict:'North Dakota performs in the lower tier. No deposit scheme. Low population density and limited municipal programs contribute to below-average capture rates.'},
+  NE:{rank:27,tier:'mid',deposit:false,verdict:'Nebraska sits in the mid tier. No deposit scheme. Omaha and Lincoln have reasonable municipal programs but rural capture rates lag.'},
+  NH:{rank:10,tier:'top',deposit:false,verdict:'New Hampshire performs above average despite having no statewide deposit scheme. Strong environmental culture and good municipal programs in the southern part of the state drive above-average capture rates.'},
+  NJ:{rank:18,tier:'mid',deposit:false,verdict:'New Jersey has mandatory recycling legislation and decent infrastructure but no deposit scheme. Contamination in single-stream programs is a persistent challenge.'},
+  NM:{rank:34,tier:'low',deposit:false,verdict:'New Mexico performs below the national average. No deposit scheme. Limited recycling infrastructure outside Albuquerque and Santa Fe.'},
+  NV:{rank:37,tier:'low',deposit:false,verdict:'Nevada performs in the lower tier. No deposit scheme. Las Vegas generates significant waste from tourism and hospitality — sectors with historically low recycling participation.'},
+  NY:{rank:6,tier:'top',deposit:true,verdict:'New York\'s deposit return scheme covers a broad range of containers. Its recycling rates for aluminium and PET plastic are significantly above the national average.'},
+  OH:{rank:21,tier:'mid',deposit:false,verdict:'Ohio sits in the mid tier. No deposit scheme. Some major cities have invested in MRF infrastructure but statewide capture rates remain below the national leaders.'},
+  OK:{rank:43,tier:'low',deposit:false,verdict:'Oklahoma performs in the lower tier. No deposit scheme. Recycling access is limited outside Tulsa and Oklahoma City. Statewide recycling rates are well below the national average.'},
+  OR:{rank:4,tier:'top',deposit:true,verdict:'Oregon was the first US state to pass a bottle bill in 1971. Its deposit return scheme covers a wide range of containers and achieves high return rates.'},
+  PA:{rank:22,tier:'mid',deposit:false,verdict:'Pennsylvania performs in the mid tier. Philadelphia and Pittsburgh have municipal programs but the state has significant rural areas with limited recycling access.'},
+  RI:{rank:11,tier:'top',deposit:false,verdict:'Rhode Island performs above average. Its small size allows for efficient municipal recycling programs and strong community participation rates.'},
+  SC:{rank:39,tier:'low',deposit:false,verdict:'South Carolina performs in the lower tier nationally. No deposit scheme. Recycling is largely voluntary and infrastructure investment has been limited.'},
+  SD:{rank:49,tier:'low',deposit:false,verdict:'South Dakota performs in the lower tier. No deposit scheme. Limited recycling infrastructure and low participation rates across much of the state.'},
+  TN:{rank:38,tier:'low',deposit:false,verdict:'Tennessee performs below the national average. No deposit scheme and limited statewide recycling mandates. Nashville has stronger programs than rural areas but the state overall is in the lower performance tier.'},
+  TX:{rank:35,tier:'low',deposit:false,verdict:'Texas performs below the national average on recycling. No statewide deposit scheme and significant variation between cities. Austin and Houston have made investments while other areas have minimal programs.'},
+  UT:{rank:26,tier:'mid',deposit:false,verdict:'Utah sits in the mid tier. No deposit scheme. Salt Lake City has reasonable recycling infrastructure but statewide capture rates are average.'},
+  VA:{rank:17,tier:'mid',deposit:false,verdict:'Virginia performs in the mid tier. No deposit scheme. Northern Virginia\'s proximity to DC and strong municipal programs help but the state average is pulled down by lower rural participation.'},
+  VT:{rank:3,tier:'top',deposit:true,verdict:'Vermont has mandatory food waste recycling — one of the few states that requires composting of organic material. Combined with its deposit scheme it consistently performs in the top tier nationally.'},
+  WA:{rank:14,tier:'mid',deposit:false,verdict:'Washington has strong environmental regulation and above-average recycling participation but no statewide deposit scheme. Performance is solid but below the deposit states.'},
+  WI:{rank:15,tier:'mid',deposit:false,verdict:'Wisconsin has decent municipal recycling infrastructure but no deposit scheme. Contamination rates in single-stream programs are a documented challenge.'},
+  WV:{rank:48,tier:'low',deposit:false,verdict:'West Virginia consistently performs in the bottom tier on recycling nationally. No deposit scheme. Limited infrastructure, low participation rates, and economic constraints have prevented significant investment.'},
+  WY:{rank:47,tier:'low',deposit:false,verdict:'Wyoming is among the lowest-performing states on recycling. No deposit scheme and very low population density makes recycling infrastructure investment economically challenging.'}
+};
+
+const stateNames={AK:'Alaska',AL:'Alabama',AR:'Arkansas',AZ:'Arizona',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',IA:'Iowa',ID:'Idaho',IL:'Illinois',IN:'Indiana',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',MA:'Massachusetts',MD:'Maryland',ME:'Maine',MI:'Michigan',MN:'Minnesota',MO:'Missouri',MS:'Mississippi',MT:'Montana',NC:'North Carolina',ND:'North Dakota',NE:'Nebraska',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NV:'Nevada',NY:'New York',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VA:'Virginia',VT:'Vermont',WA:'Washington',WI:'Wisconsin',WV:'West Virginia',WY:'Wyoming'};
+
+// Build sorted dropdown
+const sel=document.getElementById('stateSelect');
+Object.keys(stateNames).sort((a,b)=>stateNames[a].localeCompare(stateNames[b])).forEach(code=>{
+  const opt=document.createElement('option');opt.value=code;opt.textContent=stateNames[code];sel.appendChild(opt);
+});
+
+function showState(){
+  const code=sel.value;
+  const result=document.getElementById('stateResult');
+  if(!code){result.classList.remove('show');return;}
+  const d=stateData[code]||{rank:25,tier:'mid',deposit:false,verdict:'Data for this state reflects national mid-tier averages.'};
+  const tierLabel={top:'Top tier',mid:'Mid tier',low:'Lower tier'};
+  const tierClass={top:'tier-top',mid:'tier-mid',low:'tier-low'};
+  document.getElementById('stRank').textContent='#'+d.rank;
+  document.getElementById('stTier').innerHTML='<span class="tier-badge '+tierClass[d.tier]+'">'+tierLabel[d.tier]+'</span>';
+  document.getElementById('stTierSub').textContent=d.tier==='top'?'Performing above national average':d.tier==='mid'?'Performing at or near national average':'Performing below national average';
+  document.getElementById('stDeposit').textContent=d.deposit?'Yes':'No';
+  document.getElementById('stDeposit').style.color=d.deposit?'#28a745':'#dc3545';
+  document.getElementById('stDepositSub').textContent=d.deposit?'Deposit scheme in place — a key driver of high capture rates':'No statewide deposit scheme — strongly correlated with lower capture rates';
+  document.getElementById('stVerdict').innerHTML=d.verdict;
+  result.classList.add('show');
+}
+
+// ── MATERIALS ───────────────────────────────────────────────────────────────
+const materials=[
+  {name:'Corrugated cardboard',rate:73,color:'#28a745',trend:'Rising',why:'One of the most successfully recycled materials. Driven by e-commerce growth and strong end markets.'},
+  {name:'Paper and newspaper',rate:67,color:'#28a745',trend:'Stable',why:'Strong overall rate but food contamination — greasy paper, wet napkins — reduces effective recycling significantly.'},
+  {name:'Steel cans',rate:58,color:'#28a745',trend:'Stable',why:'Magnetic separation technology makes steel one of the more efficiently recovered materials.'},
+  {name:'Aluminium cans',rate:45,color:'#28a745',trend:'Stable',why:'Infinitely recyclable. Recycled aluminium saves 94% of the energy needed to make new aluminium.'},
+  {name:'Glass bottles',rate:33,color:'#856404',trend:'Declining',why:'Heavy and expensive to transport. Rates are significantly higher in states with deposit return schemes.'},
+  {name:'PET plastic bottles',rate:29,color:'#856404',trend:'Declining',why:'One of the more recyclable plastics but contamination and lack of end markets limits recovery.'},
+  {name:'E-waste',rate:22,color:'#856404',trend:'Declining',why:'Only 22% of e-waste is recycled globally. The rest is often dumped or recycled under unsafe conditions.'},
+  {name:'All other plastics',rate:5,color:'#dc3545',trend:'Declining',why:'Most plastic types have no viable recycling infrastructure. Often labelled recyclable but sent to landfill.'}
+];
+
+function buildMaterials(){
+  const grid=document.getElementById('matGrid');
+  materials.forEach(m=>{
+    const card=document.createElement('div');card.className='mat-card';
+    const arrow=m.trend==='Declining'?'↓':m.trend==='Rising'?'↑':'→';
+    card.innerHTML=`<div class="mat-header"><span class="mat-name">${m.name}</span><span class="mat-rate" style="color:${m.color};">${m.rate}%</span></div><div class="mat-track"><div class="mat-fill" style="background:${m.color};" data-w="${m.rate}"></div></div><div class="mat-sub">${arrow} <strong style="color:${m.color};">${m.trend}</strong> — ${m.why}</div>`;
+    grid.appendChild(card);
+  });
+  setTimeout(()=>{document.querySelectorAll('.mat-fill').forEach(el=>{el.style.width=el.dataset.w+'%';});},300);
+}
+
+// ── WATER BOTTLE SVG (Option B — rounded sport bottle) ─────────────────────
+const waterBottleSVG = `<svg width="40" height="48" viewBox="0 0 40 48" fill="none" stroke="#3a3020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="15" y="2" width="10" height="4" rx="1.5"/>
+  <path d="M12 6h16v6l4 6v26a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V18l4-6V6z"/>
+  <path d="M8 22 Q20 26 32 22" stroke-width="1.2"/>
+  <path d="M8 32 Q20 36 32 32" stroke-width="1"/>
+</svg>`;
+
+// ── CALCULATOR ITEMS ────────────────────────────────────────────────────────
+const items=[
+  {name:'Greasy pizza slice',   recyclable:false, icon:'ph', ph:'ph-pizza',        why:'Grease saturates cardboard fibre — even a lightly greasy box contaminates an entire paper batch.'},
+  {name:'Clean cardboard box',  recyclable:true,  icon:'ph', ph:'ph-package',      why:'One of the most successfully recycled materials. Flatten it and keep it dry and clean.'},
+  {name:'Plastic shopping bag', recyclable:false, icon:'ph', ph:'ph-shopping-bag', why:'Jams sorting machinery and shuts down facilities. Use specialist drop-off points — never curbside bins.'},
+  {name:'Clean plastic bottle', recyclable:true,  icon:'svg',svg:waterBottleSVG,   why:'PET bottles are among the more recyclable plastics. Rinse and replace the cap before recycling.'},
+  {name:'Disposable coffee cup',recyclable:false, icon:'ph', ph:'ph-coffee',       why:'The plastic lining fused to the paper cannot be separated in standard MRF facilities.'},
+  {name:'Rinsed tin can',       recyclable:true,  icon:'ph', ph:'ph-cylinder',     why:'Steel cans are highly recyclable. Magnetic separation makes them easy to recover. Rinsing is essential.'},
+  {name:'Glass bottle',         recyclable:true,  icon:'ph', ph:'ph-beer-bottle',  why:'Infinitely recyclable. Check your local scheme — some single-stream programmes do not accept glass.'},
+  {name:'Plastic pump bottle',  recyclable:true,  icon:'ph', ph:'ph-hand-soap',    why:'Most pump bottles are HDPE plastic — one of the more recyclable types. Rinse and replace the cap.'},
+  {name:'Bubble wrap',          recyclable:false, icon:'ph', ph:'ph-circles-four', why:'Clogs sorting machinery. Drop off at specialist plastic film collection points at major retailers.'},
+  {name:'Food takeout box',     recyclable:false, icon:'ph', ph:'ph-fork-knife',   why:'Food residue makes it a contaminant. If it cannot be rinsed completely clean it goes in general waste.'},
+  {name:'Cardboard egg carton', recyclable:true,  icon:'ph', ph:'ph-egg',          why:'Cardboard egg cartons are recyclable. Polystyrene ones are not — check before placing in the bin.'},
+  {name:'Rinsed juice carton',  recyclable:true,  icon:'ph', ph:'ph-orange-slice', why:'Accepted in most curbside programmes. Rinse and flatten before placing in the recycling bin.'},
+  {name:'Battery',              recyclable:false, icon:'ph', ph:'ph-battery-full', why:'A leading cause of fires in recycling facilities. Use specialist battery drop-off points only.'},
+  {name:'Old clothing',         recyclable:false, icon:'ph', ph:'ph-t-shirt',      why:'Textiles are not accepted in curbside recycling. Donate or use textile recycling collection points.'},
+  {name:'Clean newspaper',      recyclable:true,  icon:'ph', ph:'ph-newspaper',    why:'Among the most successfully recycled materials. Keep it dry and free of food contamination.'},
+  {name:'Rinsed yoghurt pot',   recyclable:true,  icon:'ph', ph:'ph-jar',          why:'Most rigid plastic tubs are recyclable if rinsed. A quick rinse makes a significant difference.'},
+  {name:'Used paper towel',     recyclable:false, icon:'ph', ph:'ph-scroll',       why:'Too contaminated with food or moisture to be recycled. General waste or compost only.'},
+  {name:'Old electronics',      recyclable:false, icon:'ph', ph:'ph-laptop',       why:'Require specialist e-waste recycling. Never curbside — they contain hazardous materials.'},
+  {name:'Foil snack wrapper',   recyclable:false, icon:'ph', ph:'ph-note',         why:'Multi-layer laminates that cannot be separated in standard facilities. Not curbside recyclable.'},
+  {name:'Empty aerosol can',    recyclable:true,  icon:'ph', ph:'ph-spray-bottle', why:'Accepted in most curbside programmes when completely empty. Never crush before recycling.'},
+];
+
+function buildItems(){
+  const grid=document.getElementById('itemsGrid');
+  items.forEach((item,i)=>{
+    const btn=document.createElement('div');
+    btn.className='item-btn';btn.id='item-'+i;
+    const iconHTML = item.icon==='svg'
+      ? `<div class="item-icon-wrap">${item.svg}</div>`
+      : `<div class="item-icon-wrap"><i class="ph ${item.ph}"></i></div>`;
+    btn.innerHTML=`${iconHTML}<span class="item-name">${item.name}</span><span class="item-tick" id="tick-${i}">✓</span>`;
+    btn.onclick=()=>{btn.classList.remove('reveal-right','reveal-wrong');btn.classList.toggle('selected');};
+    grid.appendChild(btn);
+  });
+}
+
+function calculate(){
+  const selected=items.map((item,i)=>({...item,chosen:document.getElementById('item-'+i).classList.contains('selected')})).filter(i=>i.chosen);
+  if(!selected.length){alert('Select at least one item first.');return;}
+  items.forEach((item,i)=>{
+    const btn=document.getElementById('item-'+i);
+    if(btn.classList.contains('selected')){
+      btn.classList.remove('reveal-right','reveal-wrong');
+      btn.classList.add(item.recyclable?'reveal-right':'reveal-wrong');
+      document.getElementById('tick-'+i).textContent=item.recyclable?'✓':'✗';
+    }
+  });
+  const wrong=selected.filter(i=>!i.recyclable);
+  const right=selected.filter(i=>i.recyclable);
+  const score=Math.round((right.length/selected.length)*100);
+  const annualCost=Math.round(wrong.length*275*0.15*200000/1000);
+  document.getElementById('scoreVal').textContent=score+'%';
+  document.getElementById('scoreSub').textContent=score>=80?'Good recycling habits overall':score>=50?'Some common mistakes identified':'Significant wishcycling detected';
+  document.getElementById('wrongCount').textContent=wrong.length;
+  document.getElementById('wrongSub').textContent=wrong.length===0?'None of your selections contaminate':wrong.length+' item'+(wrong.length>1?'s':'')+' that do not belong in the recycling bin';
+  document.getElementById('rightCount').textContent=right.length;
+  document.getElementById('rightSub').textContent=right.length+' of your '+selected.length+' selections correctly belong in the recycling bin';
+  document.getElementById('costVal').textContent='~$'+annualCost.toLocaleString()+'k';
+  const list=document.getElementById('reviewList');list.innerHTML='';
+  selected.forEach(item=>{
+    const div=document.createElement('div');
+    div.className='review-item '+(item.recyclable?'ri-good':'ri-bad');
+    div.innerHTML=`<span class="ri-icon">${item.recyclable?'✓':'✗'}</span><div class="ri-text"><strong>${item.name}</strong>${item.why}</div>`;
+    list.appendChild(div);
+  });
+  const rw=document.getElementById('resultWrap');
+  rw.classList.add('show');
+  rw.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function resetCalc(){
+  items.forEach((item,i)=>{
+    const btn=document.getElementById('item-'+i);
+    btn.classList.remove('selected','reveal-right','reveal-wrong');
+    document.getElementById('tick-'+i).textContent='✓';
+  });
+  document.getElementById('resultWrap').classList.remove('show');
+}
+
+// ── KPI COUNT-UP ────────────────────────────────────────────────────────────
+const kpiObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.kpi').forEach((k,i)=>{
+        setTimeout(()=>{
+          k.classList.add('visible');
+          const num=k.querySelector('.kpi-num');if(!num)return;
+          const target=parseFloat(num.dataset.target);
+          const suffix=num.dataset.suffix||'';
+          const prefix=num.dataset.prefix||'';
+          const isDecimal=num.dataset.decimal==='true';
+          const dur=900;const s=performance.now();
+          function step(now){
+            const p=Math.min((now-s)/dur,1);
+            const ev=1-Math.pow(1-p,3);
+            const val=target*ev;
+            num.textContent=prefix+(isDecimal?val.toFixed(1):Math.round(val))+suffix;
+            if(p<1)requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        },i*120);
+      });
+      kpiObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.2});
+const kg=document.getElementById('kpiGrid');
+if(kg)kpiObs.observe(kg);
+
+buildItems();
+buildMaterials();
+</script>
+</body>
+</html>
